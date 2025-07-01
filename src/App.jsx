@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {useDebounce} from 'react-use'
+import { useDebounce } from 'react-use';
 import Search from './components/Search';
 import './index.css';
 import Spinner from './components/Spinner';
@@ -22,9 +22,9 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [debouncedSearchTerm, setDebouncedSearchedTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchedTerm] = useState('');
 
-  useDebounce(() => setDebouncedSearchedTerm(searchTerm), 500, [searchTerm])
+  useDebounce(() => setDebouncedSearchedTerm(searchTerm), 500, [searchTerm]);
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true);
@@ -51,7 +51,9 @@ function App() {
 
       setMovieList(data.results || []);
 
-      updateSearchCount()
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
     } catch (error) {
       console.error('error fetching movies: ${error}');
       setErrorMessage('Error fetching movies. Please try again later.');
@@ -88,7 +90,7 @@ function App() {
             ) : (
               <ul>
                 {movieList.map((movie) => (
-                  < MovieCard key={movie.id} movie={movie} />
+                  <MovieCard key={movie.id} movie={movie} />
                 ))}
               </ul>
             )}
