@@ -4,6 +4,7 @@ import Search from './components/Search';
 import './index.css';
 import Spinner from './components/Spinner';
 import MovieCard from './components/MovieCard';
+import { updateSearchCount } from './appwrite';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -49,6 +50,8 @@ function App() {
       }
 
       setMovieList(data.results || []);
+
+      updateSearchCount()
     } catch (error) {
       console.error('error fetching movies: ${error}');
       setErrorMessage('Error fetching movies. Please try again later.');
