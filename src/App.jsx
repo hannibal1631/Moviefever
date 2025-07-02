@@ -4,7 +4,7 @@ import Search from './components/Search';
 import './index.css';
 import Spinner from './components/Spinner';
 import MovieCard from './components/MovieCard';
-import { updateSearchCount } from './appwrite';
+import { getTrendingMovies, updateSearchCount } from './appwrite';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -23,6 +23,7 @@ function App() {
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchedTerm] = useState('');
+  const [trendingMovies, setTrendingMovies] = useState('')
 
   useDebounce(() => setDebouncedSearchedTerm(searchTerm), 500, [searchTerm]);
 
@@ -62,9 +63,23 @@ function App() {
     }
   };
 
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies()
+
+      setTrendingMovies(movies)
+    } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
+    }
+  }
+
   useEffect(() => {
     fetchMovies(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    loadTrendingMovies()
+  }, [])
 
   return (
     <>
@@ -81,7 +96,7 @@ function App() {
           </header>
 
           <section className='all-movies'>
-            <h2 className='mt-[40px]'>All Movies</h2>
+            <h2>All Movies</h2>
 
             {isLoading ? (
               <Spinner />
